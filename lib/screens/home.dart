@@ -169,7 +169,19 @@ Widget normalHomeContainer(BuildContext context) {
               Navigator.pushNamed(context, '/login');
             },
             icon: const Icon(Icons.login),
-            label: const Text('Login'))
+            label: const Text('Login')),
+        const SizedBox(
+          height: 20,
+          width: 0,
+        ),
+        FloatingActionButton.extended(
+            heroTag: 'flogbtn',
+            backgroundColor: Colors.blueGrey,
+            onPressed: () {
+              Navigator.pushNamed(context, '/flogin');
+            },
+            icon: const Icon(Icons.perm_identity),
+            label: const Text('Faculty Login'))
       ],
     ),
   );
@@ -205,7 +217,18 @@ Widget wideHomeContainers(BuildContext context) {
                           Navigator.pushNamed(context, '/login');
                         },
                         icon: const Icon(Icons.login),
-                        label: const Text('Login'))
+                        label: const Text('Login')),
+                    const SizedBox(
+                      height: 20,
+                      width: 0,
+                    ),
+                    FloatingActionButton.extended(
+                        heroTag: 'flogbtn1',
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/flogin');
+                        },
+                        icon: const Icon(Icons.perm_identity),
+                        label: const Text('Faculty Login'))
                   ],
                 ),
               ))));

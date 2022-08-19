@@ -5,7 +5,6 @@ import 'package:highlight/languages/all.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:flutter_highlight/themes/vs.dart';
 import 'package:flutter/material.dart';
-import 'package:my_work/screens/hover.dart';
 import 'dart:math';
 import 'package:highlight/src/mode.dart';
 
