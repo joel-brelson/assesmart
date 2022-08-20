@@ -2,9 +2,17 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_work/models/Information.dart';
+import 'package:my_work/models/attendanceModel.dart';
+import 'package:my_work/models/usermodel.dart';
+import 'package:my_work/screens/Attendance2.dart';
+import 'package:my_work/screens/dashboard.dart';
 import 'package:my_work/screens/takepicturescreen.dart';
+import 'package:intl/intl.dart';
 
 class Attendance extends StatefulWidget {
   const Attendance({
@@ -17,7 +25,9 @@ class Attendance extends StatefulWidget {
 }
 
 class _AttendanceState extends State<Attendance> {
-  String? subj, Period;
+  final _auth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
+  String? subj, Period, errorMessage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,10 +189,68 @@ class _AttendanceState extends State<Attendance> {
             Flexible(
                 flex: 1,
                 child: ElevatedButton(
-                    onPressed: () {}, child: Text("Submit Attendance"))),
+                    onPressed: () {
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => DashBoard()));
+                      //Navigator.pop(context);
+                      // if (_formKey.currentState!.validate()) {
+                      //   // If the form is valid, display a snackbar. In the real world,
+                      //   // you'd often call a server or save the information in a database.
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     const SnackBar(content: Text('Processing Data')),
+                      //   );
+                      // }
+                      //attendanceSubmit(subj, Period);
+                      addMultipleCollections(subj, Period);
+                    },
+                    child: Text("Submit Attendance"))),
           ],
         ),
       ),
     );
+  }
+
+  // ignore: non_constant_identifier_names
+  addMultipleCollections(String? subj, String? Period) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    // UserModel loggedInUser = UserModel();
+    // @override
+    // void initState() {
+    //   super.initState();
+    //   FirebaseFirestore.instance
+    //       .collection("users")
+    //       .doc(user!.uid)
+    //       .get()
+    //       .then((value) {
+    //     loggedInUser = UserModel.fromMap(value.data());
+    //     setState(() {});
+    //   });
+    // }
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    AttendanceModel attendanceModel = AttendanceModel();
+    String? date = dateFormat.format(DateTime.now());
+
+    attendanceModel.date = date;
+    attendanceModel.period = Period;
+    attendanceModel.subject = subj;
+    // CollectionReference users = FirebaseFirestore.instance.collection('users');
+    // users
+    //     .doc(user?.uid)
+    //     .collection('attendance-history')
+    //     .add({'subject': subj, 'period': Period});
+    // Fluttertoast.showToast(msg: "Attendance submitted successfully..");
+    // Navigator.pushAndRemoveUntil((context),
+    //     MaterialPageRoute(builder: (context) => DashBoard()), (route) => false);
+    await firebaseFirestore
+        .collection("users")
+        .doc(user?.email)
+        .collection('attendance-history')
+        .add({"date ": date, "period": Period, "subject": subj});
+    //.set(attendanceModel.toMap());
+    Fluttertoast.showToast(msg: "Attendance submitted successfully :) ");
+    Navigator.pushAndRemoveUntil((context),
+        MaterialPageRoute(builder: (context) => DashBoard()), (route) => false);
   }
 }

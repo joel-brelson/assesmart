@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_work/screens/flogin.dart';
+import 'package:my_work/screens/login.dart';
+import 'package:my_work/screens/register.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key});
@@ -10,98 +13,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const SizedBox(
-              height: 70,
-              child: DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.indigo,
-                  ),
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    'Assessmart',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                    ),
-                  )),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.app_registration,
-                  color: Colors.indigo,
-                ),
-                title: const Text('Sign Up'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/register');
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.login,
-                  color: Colors.green,
-                ),
-                title: const Text('Login'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/login');
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.code,
-                  color: Colors.pinkAccent,
-                ),
-                title: const Text('Coding Lab'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/coding_lab');
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.app_registration_rounded,
-                  color: Colors.teal,
-                ),
-                title: const Text('Attendance Registration'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/register_attendence');
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.calendar_month,
-                  color: Colors.red,
-                ),
-                title: const Text('Attendance'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/attendance');
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
         title: const Text('SmartAccess'),
-        centerTitle: true,
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           if (MediaQuery.of(context).size.width > 600)
             Padding(
@@ -123,7 +38,7 @@ class _HomeState extends State<Home> {
                         Navigator.pushNamed(context, '/login');
                       },
                       //icon: const Icon(Icons.login),
-                      backgroundColor: Colors.pink,
+                      backgroundColor: Color.fromARGB(255, 30, 115, 233),
                       label: const Text('Login')),
                 ],
               ),
@@ -154,7 +69,8 @@ Widget normalHomeContainer(BuildContext context) {
         FloatingActionButton.extended(
             heroTag: 'regbtn',
             onPressed: () {
-              Navigator.pushNamed(context, '/register');
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new Register()));
             },
             backgroundColor: Colors.deepPurple,
             icon: const Icon(Icons.app_registration),
@@ -166,10 +82,25 @@ Widget normalHomeContainer(BuildContext context) {
         FloatingActionButton.extended(
             heroTag: 'logbtn',
             onPressed: () {
-              Navigator.pushNamed(context, '/login');
+              //Navigator.pushNamed(context, '/login');
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new Login()));
             },
             icon: const Icon(Icons.login),
-            label: const Text('Login'))
+            label: const Text('Login')),
+        const SizedBox(
+          height: 20,
+          width: 0,
+        ),
+        FloatingActionButton.extended(
+            heroTag: 'flogbtn',
+            backgroundColor: Colors.blueGrey,
+            onPressed: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new FLogin()));
+            },
+            icon: const Icon(Icons.perm_identity),
+            label: const Text('Faculty Login'))
       ],
     ),
   );
@@ -205,7 +136,18 @@ Widget wideHomeContainers(BuildContext context) {
                           Navigator.pushNamed(context, '/login');
                         },
                         icon: const Icon(Icons.login),
-                        label: const Text('Login'))
+                        label: const Text('Login')),
+                    const SizedBox(
+                      height: 20,
+                      width: 0,
+                    ),
+                    FloatingActionButton.extended(
+                        heroTag: 'flogbtn1',
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/flogin');
+                        },
+                        icon: const Icon(Icons.perm_identity),
+                        label: const Text('Faculty Login'))
                   ],
                 ),
               ))));
