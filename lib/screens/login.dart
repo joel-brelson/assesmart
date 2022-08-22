@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_work/screens/dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -49,6 +52,10 @@ class LoginFormState extends State<LoginForm> {
   //
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
+  final _auth = FirebaseAuth.instance;
+  final passwordController = TextEditingController();
+  final emailController = TextEditingController();
+  String? errorMessage;
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
   @override
@@ -64,6 +71,7 @@ class LoginFormState extends State<LoginForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: emailController,
                 decoration: const InputDecoration(
                   icon: Icon(Icons.person),
                   hintText: 'Enter your Username/ID',
@@ -81,6 +89,7 @@ class LoginFormState extends State<LoginForm> {
               ),
               TextFormField(
                 obscureText: _isObscure,
+                controller: passwordController,
                 decoration: InputDecoration(
                   icon: const Icon(Icons.password),
                   hintText: 'Enter your Password',
@@ -118,6 +127,8 @@ class LoginFormState extends State<LoginForm> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
+                            signIn(
+                                emailController.text, passwordController.text);
                           }
                         },
                         child: const Text('Login'),
@@ -165,5 +176,45 @@ class LoginFormState extends State<LoginForm> {
         ),
       ),
     );
+  }
+
+  void signIn(String email, String password) async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await _auth
+            .signInWithEmailAndPassword(email: email, password: password)
+            .then((uid) => {
+                  Fluttertoast.showToast(msg: "Login Successful"),
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => DashBoard())),
+                });
+      } on FirebaseAuthException catch (error) {
+        switch (error.code) {
+          case "invalid-email":
+            errorMessage = "Your email address appears to be malformed.";
+
+            break;
+          case "wrong-password":
+            errorMessage = "Your password is wrong.";
+            break;
+          case "user-not-found":
+            errorMessage = "User with this email doesn't exist.";
+            break;
+          case "user-disabled":
+            errorMessage = "User with this email has been disabled.";
+            break;
+          case "too-many-requests":
+            errorMessage = "Too many requests";
+            break;
+          case "operation-not-allowed":
+            errorMessage = "Signing in with Email and Password is not enabled.";
+            break;
+          default:
+            errorMessage = "An undefined Error happened.";
+        }
+        Fluttertoast.showToast(msg: errorMessage!);
+        print(error.code);
+      }
+    }
   }
 }

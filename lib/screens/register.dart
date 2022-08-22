@@ -376,13 +376,13 @@ class RegistrationFormState extends State<RegistrationForm> {
 
     // writing all the values
     userModel.email = user!.email;
-    userModel.userId = user.uid;
+    userModel.userId = userId.text;
     userModel.password = password.text;
     userModel.userName = userName.text;
     userModel.department = dept;
     userModel.email = email.text;
     userModel.section = section;
-
+    userModel.uId = user.uid;
     await firebaseFirestore
         .collection("users")
         .doc(user.uid)

@@ -2,8 +2,12 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_work/models/Information.dart';
+import 'package:my_work/models/UserAttendanceModel.dart';
+import 'package:my_work/models/usermodel.dart';
 import 'package:my_work/screens/takepicturescreen.dart';
 
 class Attendance extends StatefulWidget {
@@ -18,6 +22,22 @@ class Attendance extends StatefulWidget {
 
 class _AttendanceState extends State<Attendance> {
   String? subj, Period;
+  final OtpController = TextEditingController();
+  User? user = FirebaseAuth.instance.currentUser;
+  UserAttendanceModel usr_record = UserAttendanceModel();
+  DocumentReference? user_db;
+  UserModel loggedinuser = new UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+    user_db = FirebaseFirestore.instance.collection("users").doc(user!.uid);
+
+    user_db!.get().then((value) {
+      this.loggedinuser = UserModel.fromMap(value.data());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,10 +199,27 @@ class _AttendanceState extends State<Attendance> {
             Flexible(
                 flex: 1,
                 child: ElevatedButton(
-                    onPressed: () {}, child: Text("Submit Attendance"))),
+                    onPressed: () {
+                      AttendStore(Period!, subj!, OtpController.text);
+                    },
+                    child: Text("Submit Attendance"))),
           ],
         ),
       ),
     );
+  }
+
+  void AttendStore(String? _period, String? _subject, String? _otp) {
+    DateTime now = new DateTime.now();
+    String date = new DateTime(now.day, now.month, now.year).toString();
+    usr_record.date = date;
+    usr_record.Period = _period;
+    usr_record.UserId = loggedinuser.userId;
+    usr_record.UserName = loggedinuser.userName;
+    usr_record.Section = loggedinuser.section;
+    usr_record.Subject = _subject;
+    usr_record.department = loggedinuser.department;
+    usr_record.AId = "hello";
+    user_db!.collection("Attendance-History").add(usr_record.toMap());
   }
 }

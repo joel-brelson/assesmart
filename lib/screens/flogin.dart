@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -49,11 +51,14 @@ class LoginFormState extends State<LoginForm> {
   //
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
+  final emailController = new TextEditingController();
+  final PasswordContoller = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
+    FirebaseAuth _auth = FirebaseAuth.instance;
     var wth = MediaQuery.of(context).size.width;
     return Center(
       child: SizedBox(
@@ -64,6 +69,7 @@ class LoginFormState extends State<LoginForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                controller: emailController,
                 decoration: const InputDecoration(
                   icon: Icon(Icons.person),
                   hintText: 'Enter your Username/ID',
@@ -81,6 +87,7 @@ class LoginFormState extends State<LoginForm> {
               ),
               TextFormField(
                 obscureText: _isObscure,
+                controller: PasswordContoller,
                 decoration: InputDecoration(
                   icon: const Icon(Icons.password),
                   hintText: 'Enter your Password',
@@ -118,6 +125,10 @@ class LoginFormState extends State<LoginForm> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
+                            FirebaseFirestore.instance
+                                .collection("faculty")
+                                .where('email', isEqualTo: emailController.text)
+                                .get();
                           }
                           Navigator.pushNamed(context, '/fhome');
                         },

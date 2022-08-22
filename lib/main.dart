@@ -4,6 +4,7 @@ import 'package:my_work/Attendace.dart';
 import 'package:my_work/screens/HomePage.dart';
 import 'package:my_work/screens/Menu.dart';
 import 'package:my_work/screens/coding_lab.dart';
+import 'package:my_work/screens/dashboard.dart';
 import 'package:my_work/screens/flogin.dart';
 import 'package:my_work/screens/home.dart';
 import 'package:my_work/screens/login.dart';
@@ -33,8 +34,8 @@ Future<void> main() async {
       debugShowCheckedModeBanner: false,
       //theme: ThemeData.dark(),
       routes: {
-        '/': (context) => const Home(),
-        '/home': (context) => const Home(),
+        '/': (context) => Home(),
+        '/home': (context) => Home(),
         '/register': (context) => const Register(),
         '/login': (context) => const Login(),
         '/coding_lab': (context) => const CodingLab(),
