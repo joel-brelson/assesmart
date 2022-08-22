@@ -58,32 +58,6 @@ class _DashBoardState extends State<DashBoard> {
             Card(
               child: ListTile(
                 leading: const Icon(
-                  Icons.app_registration,
-                  color: Colors.indigo,
-                ),
-                title: const Text('Sign Up'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/register');
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
-                  Icons.login,
-                  color: Colors.green,
-                ),
-                title: const Text('Login'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/login');
-                },
-              ),
-            ),
-            Card(
-              child: ListTile(
-                leading: const Icon(
                   Icons.code,
                   color: Colors.pinkAccent,
                 ),

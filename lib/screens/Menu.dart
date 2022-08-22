@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_work/screens/Attendance2.dart';
 import 'package:my_work/screens/Contact.dart';
@@ -18,6 +19,40 @@ class _MenuState extends State<Menu> {
         title: Text("Assessmart"),
         centerTitle: true,
         backgroundColor: Colors.teal,
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+        child: ListView(padding: EdgeInsets.zero, children: [
+          const SizedBox(
+            height: 70,
+            child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.indigo,
+                ),
+                padding: EdgeInsets.all(20.0),
+                child: Text(
+                  'Assessmart',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                )),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+              title: const Text('Logout'),
+              onTap: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+          ),
+        ]),
       ),
       body: Center(
         child: Column(
