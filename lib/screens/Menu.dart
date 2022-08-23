@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_work/screens/Attendance2.dart';
 import 'package:my_work/screens/Contact.dart';
 import 'package:my_work/screens/lab_verfication.dart';
+import 'package:my_work/screens/subjectRegister.dart';
 
 class Menu extends StatefulWidget {
   Menu({Key? key}) : super(key: key);
@@ -37,6 +38,19 @@ class _MenuState extends State<Menu> {
                     fontSize: 20.0,
                   ),
                 )),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(
+                Icons.app_registration,
+                color: Colors.red,
+              ),
+              title: const Text('Register Subject'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => subjectRegister()));
+              },
+            ),
           ),
           Card(
             child: ListTile(

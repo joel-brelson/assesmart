@@ -10,6 +10,7 @@ import 'package:my_work/screens/home.dart';
 import 'package:my_work/screens/login.dart';
 import 'package:my_work/screens/register.dart';
 import 'package:my_work/screens/register_attendence.dart';
+import 'package:my_work/screens/subjectRegister.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -23,19 +24,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Obtain a list of the available cameras on the device.
-  final cameras = await availableCameras();
-  await Firebase.initializeApp();
+  //final cameras = await availableCameras();
+  //await Firebase.initializeApp();
 
   // Get a specific camera from the list of available cameras.
-  final firstCamera = cameras.first;
+  //final firstCamera = cameras.first;
 
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
       //theme: ThemeData.dark(),
       routes: {
-        '/': (context) => Home(),
-        '/home': (context) => Home(),
+        '/': (context) => const Home(),
+        '/home': (context) => const Home(),
         '/register': (context) => const Register(),
         '/login': (context) => const Login(),
         '/coding_lab': (context) => const CodingLab(),
