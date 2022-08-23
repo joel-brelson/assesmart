@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_work/screens/Attendance2.dart';
@@ -15,6 +16,17 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
+    User? _auth = FirebaseAuth.instance.currentUser;
+    CollectionReference facultycollection =
+        FirebaseFirestore.instance.collection("faculty");
+    dynamic fname =
+        facultycollection.where('email', isEqualTo: _auth!.email).get().then(
+      (value) {
+        value.docs.forEach((element) {
+          return element['name'];
+        });
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text("Assessmart"),
@@ -71,6 +83,7 @@ class _MenuState extends State<Menu> {
       body: Center(
         child: Column(
           children: [
+            Text("Welcome ${fname} "),
             Container(
               margin: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
@@ -90,12 +103,12 @@ class _MenuState extends State<Menu> {
                               MaterialPageRoute(
                                   builder: (context) => Attendance2()));
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.library_books,
                           semanticLabel: "Attendance",
                         ),
                       ),
-                      Text(
+                      const Text(
                         "Attendance",
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
