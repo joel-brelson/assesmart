@@ -15,18 +15,23 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   @override
-  Widget build(BuildContext context) {
-    User? _auth = FirebaseAuth.instance.currentUser;
-    CollectionReference facultycollection =
-        FirebaseFirestore.instance.collection("faculty");
-    dynamic fname =
-        facultycollection.where('email', isEqualTo: _auth!.email).get().then(
+  User? _auth = FirebaseAuth.instance.currentUser;
+  String? fname;
+  CollectionReference? facultycollection;
+  void initState() {
+    super.initState();
+    facultycollection = FirebaseFirestore.instance.collection("faculty");
+    facultycollection!.where('email', isEqualTo: _auth?.email).get().then(
       (value) {
         value.docs.forEach((element) {
-          return element['name'];
+          fname = element['name'];
         });
       },
     );
+  }
+
+  @override
+  build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Assessmart"),
@@ -83,7 +88,7 @@ class _MenuState extends State<Menu> {
       body: Center(
         child: Column(
           children: [
-            Text("Welcome ${fname} "),
+            Text("Welcome $fname"),
             Container(
               margin: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
