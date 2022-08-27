@@ -15,19 +15,10 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   @override
-  User? _auth = FirebaseAuth.instance.currentUser;
   String? fname;
-  CollectionReference? facultycollection;
+  //CollectionReference? facultycollection;
   void initState() {
     super.initState();
-    facultycollection = FirebaseFirestore.instance.collection("faculty");
-    facultycollection!.where('email', isEqualTo: _auth?.email).get().then(
-      (value) {
-        value.docs.forEach((element) {
-          fname = element['name'];
-        });
-      },
-    );
   }
 
   @override
@@ -76,8 +67,8 @@ class _MenuState extends State<Menu> {
                 color: Colors.red,
               ),
               title: const Text('Logout'),
-              onTap: () {
-                FirebaseAuth.instance.signOut();
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/home');
               },
@@ -88,7 +79,7 @@ class _MenuState extends State<Menu> {
       body: Center(
         child: Column(
           children: [
-            Text("Welcome $fname"),
+            Text("Welcome "),
             Container(
               margin: EdgeInsets.all(10.0),
               decoration: BoxDecoration(

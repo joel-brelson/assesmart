@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:my_work/models/facultymodel.dart';
 import 'package:my_work/screens/dashboard.dart';
 
 class subjectRegister extends StatefulWidget {
@@ -10,6 +14,26 @@ class subjectRegister extends StatefulWidget {
 
 class _subjectRegisterState extends State<subjectRegister> {
   List typeofregister = ["Theory", "Lab"];
+  User? _auth = FirebaseAuth.instance.currentUser;
+  String? fname;
+  List<FacultyModel?> teacher = [];
+  CollectionReference? Subjectcollection, facultycollection;
+  int x = 0;
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> assignTeacher() async {
+    _auth = FirebaseAuth.instance.currentUser;
+    await facultycollection!.where('email', isEqualTo: _auth?.email).get().then(
+      (value) {
+        value.docs.forEach((element) {
+          teacher.add(FacultyModel.fromMap(element));
+          print(teacher[0]!.name);
+        });
+      },
+    );
+  }
 
   String? _groupValue;
   @override
@@ -280,9 +304,44 @@ class _subjectRegisterState extends State<subjectRegister> {
           return AlertDialog(
             title: Text("Are you sure you want to register for the subject?"),
             actions: [
-              TextButton(onPressed: () {}, child: Text("Yes")),
+              TextButton(
+                  onPressed: () async {
+                    print(Branch);
+                    print(year);
+                    Subjectcollection =
+                        FirebaseFirestore.instance.collection("CSE");
+                    _auth = FirebaseAuth.instance.currentUser;
+                    facultycollection =
+                        FirebaseFirestore.instance.collection("faculty");
+                    await facultycollection!
+                        .where('email', isEqualTo: _auth?.email)
+                        .get()
+                        .then(
+                      (value) {
+                        value.docs.forEach((element) {
+                          teacher.add(FacultyModel.fromMap(element));
+                          print(teacher[0]!.name);
+                        });
+                      },
+                    );
+                    await Subjectcollection!
+                        .doc(year)
+                        .collection("Sections")
+                        .doc(section)
+                        .update({
+                      "Year": year,
+                      "Section": section,
+                      "Subject": Subject,
+                      "facultyID": teacher[0]!.fId,
+                      "facultyName": teacher[0]!.name,
+                      "type": _groupValue
+                    });
+                  },
+                  child: Text("Yes")),
               TextButton(
                 onPressed: () {
+                  //FirebaseFirestore.instance.collection(Branch!).doc(section).collection(Subject)
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 child: Text("No"),

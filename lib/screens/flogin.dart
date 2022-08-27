@@ -119,7 +119,7 @@ class LoginFormState extends State<LoginForm> {
                       child: ElevatedButton(
                         style:
                             ElevatedButton.styleFrom(primary: Colors.redAccent),
-                        onPressed: () {
+                        onPressed: () async {
                           // Validate returns true if the form is valid, or false otherwise.
                           if (_formKey.currentState!.validate()) {
                             // If the form is valid, display a snackbar. In the real world,
@@ -127,14 +127,14 @@ class LoginFormState extends State<LoginForm> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
-                            FirebaseFirestore.instance
+                            await FirebaseFirestore.instance
                                 .collection("faculty")
                                 .where('email', isEqualTo: emailController.text)
                                 .get()
-                                .then((value) {
+                                .then((value) async {
                               if (value.docs.length >= 1) {
                                 try {
-                                  _auth.signInWithEmailAndPassword(
+                                  await _auth.signInWithEmailAndPassword(
                                       email: emailController.text,
                                       password: PasswordContoller.text);
                                   Navigator.pushNamed(context, '/fhome');

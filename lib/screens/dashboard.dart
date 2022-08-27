@@ -5,26 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DashBoard extends StatefulWidget {
   DashBoard({Key? key}) : super(key: key);
-
   @override
   State<DashBoard> createState() => _DashBoardState();
 }
 
 class _DashBoardState extends State<DashBoard> {
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel loggedInUser = UserModel();
-
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      this.loggedInUser = UserModel.fromMap(value.data());
-      setState(() {});
-    });
   }
 
   @override
@@ -101,8 +89,8 @@ class _DashBoardState extends State<DashBoard> {
                   color: Colors.red,
                 ),
                 title: const Text('Logout'),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/home');
                 },
@@ -112,7 +100,7 @@ class _DashBoardState extends State<DashBoard> {
         ),
       ),
       body: Center(
-        child: Text("Hello ${loggedInUser.userId}"),
+        child: Text("Welcome to the student dashboard"),
       ),
     );
   }

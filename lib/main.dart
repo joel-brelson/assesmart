@@ -16,6 +16,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:my_work/screens/takepicturescreen.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'firebase_options.dart';
 //import 'Attendace.dart';
 
 Future<void> main() async {
@@ -25,7 +27,7 @@ Future<void> main() async {
 
   // Obtain a list of the available cameras on the device.
   final cameras = await availableCameras();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.first;
