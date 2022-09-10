@@ -309,7 +309,7 @@ class _subjectRegisterState extends State<subjectRegister> {
                     print(Branch);
                     print(year);
                     Subjectcollection =
-                        FirebaseFirestore.instance.collection("CSE");
+                        FirebaseFirestore.instance.collection(Branch!);
                     _auth = FirebaseAuth.instance.currentUser;
                     facultycollection =
                         FirebaseFirestore.instance.collection("faculty");
@@ -328,7 +328,9 @@ class _subjectRegisterState extends State<subjectRegister> {
                         .doc(year)
                         .collection("Sections")
                         .doc(section)
-                        .update({
+                        .collection("Subjects")
+                        .doc(Subject)
+                        .set({
                       "Year": year,
                       "Section": section,
                       "Subject": Subject,
@@ -336,6 +338,8 @@ class _subjectRegisterState extends State<subjectRegister> {
                       "facultyName": teacher[0]!.name,
                       "type": _groupValue
                     });
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                   child: Text("Yes")),
               TextButton(

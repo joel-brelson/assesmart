@@ -1,5 +1,7 @@
 import 'dart:ui';
-
+import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_work/models/Information.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +13,9 @@ class Attendance2 extends StatefulWidget {
 }
 
 class _Attendance2State extends State<Attendance2> {
-  String? dept, subject, year, sem, period, section;
+  String? dept, subject, year, sem, period, section, acyear;
+  int? Otp;
+  int min = 1000, max = 9999;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +176,7 @@ class _Attendance2State extends State<Attendance2> {
                     decoration: BoxDecoration(border: Border.all(width: 2.0)),
                     child: DropdownButton(
                         dropdownColor: Colors.tealAccent,
-                        value: year,
+                        value: acyear,
                         isExpanded: true,
                         iconEnabledColor: Colors.redAccent,
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
@@ -188,7 +192,7 @@ class _Attendance2State extends State<Attendance2> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           setState(() {
-                            year = newValue!;
+                            acyear = newValue!;
                           });
                         }),
                   ),
@@ -231,11 +235,34 @@ class _Attendance2State extends State<Attendance2> {
                 ),
               ]),
               SizedBox(
-                height: 15.0,
-              ),
-              SizedBox(
                 height: 25.0,
               ),
+              Row(children: [
+                Flexible(
+                  flex: 1,
+                  child: DropdownButton(
+                      dropdownColor: Colors.tealAccent,
+                      value: year,
+                      isExpanded: true,
+                      iconEnabledColor: Colors.redAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      underline: Container(),
+                      alignment: Alignment.topCenter,
+                      menuMaxHeight: 150.0,
+                      hint: Text("--  Year  --"),
+                      items: sampleData.Year.map((itemsname) {
+                        return (DropdownMenuItem(
+                          child: Text(itemsname),
+                          value: itemsname,
+                        ));
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          year = newValue!;
+                        });
+                      }),
+                ),
+              ]),
               Row(children: [
                 Flexible(
                   flex: 1,
@@ -244,7 +271,7 @@ class _Attendance2State extends State<Attendance2> {
                       child: TextField(
                         keyboardType: TextInputType.number,
                         readOnly: true,
-                        decoration: InputDecoration(hintText: "OTP"),
+                        decoration: InputDecoration(hintText: Otp.toString()),
                       )),
                 ),
                 const SizedBox(
@@ -256,7 +283,38 @@ class _Attendance2State extends State<Attendance2> {
                     child: Row(
                       children: [
                         ElevatedButton(
-                            onPressed: () {}, child: Text("Generate OTP")),
+                            onPressed: () async {
+                              Timestamp now = Timestamp.now();
+                              DateTime dateNow = now.toDate();
+                              setState(() {
+                                Otp = min + Random().nextInt(max - min);
+                              });
+                              CollectionReference temp = FirebaseFirestore
+                                  .instance
+                                  .collection(dept!)
+                                  .doc(year)
+                                  .collection("Sections")
+                                  .doc(section)
+                                  .collection("Subjects");
+                              temp
+                                  .doc(subject)
+                                  .collection('Attendance')
+                                  .doc(
+                                      '${dateNow.day}-${dateNow.month}-${dateNow.year}')
+                                  .set({
+                                "OTP": Otp,
+                                "Section": section,
+                                "Period": period,
+                                "Department": dept,
+                                "Academic year": acyear,
+                                "Sem": sem,
+                                "Subject": subject,
+                                "Time":
+                                    '${dateNow.hour}:${dateNow.minute}:${dateNow.second}',
+                                "fId": FirebaseAuth.instance.currentUser!.uid
+                              });
+                            },
+                            child: Text("Generate OTP")),
                         SizedBox(
                           width: 15.0,
                         ),

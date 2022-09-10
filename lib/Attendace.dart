@@ -27,6 +27,7 @@ class _AttendanceState extends State<Attendance> {
   UserAttendanceModel usr_record = UserAttendanceModel();
   DocumentReference? user_db;
   UserModel loggedinuser = new UserModel();
+  late List<String> times = [];
 
   @override
   void initState() {
@@ -190,6 +191,7 @@ class _AttendanceState extends State<Attendance> {
                     color: Colors.white,
                   ),
                   child: TextField(
+                    controller: OtpController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       label: Text("OTP"),
@@ -199,8 +201,64 @@ class _AttendanceState extends State<Attendance> {
             Flexible(
                 flex: 1,
                 child: ElevatedButton(
-                    onPressed: () {
-                      AttendStore(Period!, subj!, OtpController.text);
+                    onPressed: () async {
+                      Timestamp now = Timestamp.now();
+                      DateTime dateNow = now.toDate();
+                      String? OTP, fID, fname;
+                      user_db = FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(user!.uid);
+                      await user_db!.get().then((value) {
+                        loggedinuser = UserModel.fromMap(value.data());
+                      });
+                      print(loggedinuser.department);
+                      print(loggedinuser.section);
+                      print(subj);
+                      await FirebaseFirestore.instance
+                          .collection(loggedinuser.department!)
+                          .doc("E3")
+                          .collection("Sections")
+                          .doc(loggedinuser.section)
+                          .collection("Subjects")
+                          .doc(subj!)
+                          .collection('Attendance')
+                          .doc(
+                              '${dateNow.day}-${dateNow.month}-${dateNow.year}')
+                          .get()
+                          .then((value) {
+                        OTP = value["OTP"].toString();
+                        print(OTP);
+                        fID = value['fId'];
+                        print(fID);
+                        String time = value['Time'];
+                        print(time);
+                        times = time.split(':');
+                        print(times);
+                      });
+                      print(OTP);
+                      print(OtpController.text);
+                      if (OTP == OtpController.text) {
+                        if (validateTime(dateNow, times)) {
+                          print("hello");
+                        }
+                        ;
+                        await FirebaseFirestore.instance
+                            .collection("faculty")
+                            .doc(fID)
+                            .collection("Subjects")
+                            .doc(subj)
+                            .collection("Sections")
+                            .doc(loggedinuser.section)
+                            .collection("Attendance")
+                            .doc(loggedinuser.userId)
+                            .set({
+                          "name": loggedinuser.userName,
+                          "timestamp": now,
+                          "date":
+                              '${dateNow.day}-${dateNow.month}-${dateNow.year}'
+                        });
+                        AttendStore(Period!, subj!, OtpController.text);
+                      }
                     },
                     child: Text("Submit Attendance"))),
           ],
@@ -209,7 +267,7 @@ class _AttendanceState extends State<Attendance> {
     );
   }
 
-  void AttendStore(String? _period, String? _subject, String? _otp) {
+  void AttendStore(String? _period, String? _subject, String? _otp) async {
     DateTime now = new DateTime.now();
     String date = new DateTime(now.day, now.month, now.year).toString();
     usr_record.date = date;
@@ -220,6 +278,29 @@ class _AttendanceState extends State<Attendance> {
     usr_record.Subject = _subject;
     usr_record.department = loggedinuser.department;
     usr_record.AId = "hello";
-    user_db!.collection("Attendance-History").add(usr_record.toMap());
+    await user_db!.collection("Attendance-History").add(usr_record.toMap());
+  }
+
+  bool validateTime(DateTime userTime, List<String> facultyTime) {
+    if ((userTime.hour == int.parse(facultyTime[0])) &&
+        (userTime.minute == int.parse(facultyTime[1]))) {
+      return true;
+    } else if ((userTime.hour == int.parse(facultyTime[0])) &&
+        (userTime.minute == int.parse(facultyTime[1]) + 1)) {
+      if (userTime.second < int.parse(facultyTime[2])) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if ((userTime.hour == int.parse(facultyTime[0]) + 1) &&
+        (userTime.minute == 00)) {
+      if (userTime.second < int.parse(facultyTime[2])) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 }
