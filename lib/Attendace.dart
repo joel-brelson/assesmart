@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:my_work/models/Information.dart';
 import 'package:my_work/models/UserAttendanceModel.dart';
 import 'package:my_work/models/usermodel.dart';
@@ -240,24 +241,30 @@ class _AttendanceState extends State<Attendance> {
                       if (OTP == OtpController.text) {
                         if (validateTime(dateNow, times)) {
                           print("hello");
+                          await FirebaseFirestore.instance
+                              .collection("faculty")
+                              .doc(fID)
+                              .collection("Subjects")
+                              .doc(subj)
+                              .collection("Sections")
+                              .doc(loggedinuser.section)
+                              .collection("Attendance")
+                              .doc(loggedinuser.userId)
+                              .set({
+                            "name": loggedinuser.userName,
+                            "timestamp": now,
+                            "date":
+                                '${dateNow.day}-${dateNow.month}-${dateNow.year}'
+                          });
+                          AttendStore(Period!, subj!, OtpController.text);
+                          AttendStore_faculty();
+                          Fluttertoast.showToast(
+                              msg: "Attendance Submitted Successfully");
+                        } else {
+                          Fluttertoast.showToast(msg: "Otp TimeOut");
                         }
-                        ;
-                        await FirebaseFirestore.instance
-                            .collection("faculty")
-                            .doc(fID)
-                            .collection("Subjects")
-                            .doc(subj)
-                            .collection("Sections")
-                            .doc(loggedinuser.section)
-                            .collection("Attendance")
-                            .doc(loggedinuser.userId)
-                            .set({
-                          "name": loggedinuser.userName,
-                          "timestamp": now,
-                          "date":
-                              '${dateNow.day}-${dateNow.month}-${dateNow.year}'
-                        });
-                        AttendStore(Period!, subj!, OtpController.text);
+                        Fluttertoast.showToast(
+                            msg: "Incorrect Otp Check Details");
                       }
                     },
                     child: Text("Submit Attendance"))),
@@ -279,6 +286,29 @@ class _AttendanceState extends State<Attendance> {
     usr_record.department = loggedinuser.department;
     usr_record.AId = "hello";
     await user_db!.collection("Attendance-History").add(usr_record.toMap());
+  }
+
+  void AttendStore_faculty() async {
+    DateTime now = new DateTime.now();
+    String ts = now.toString();
+    await FirebaseFirestore.instance
+        .collection(loggedinuser.department!)
+        .doc("E3")
+        .collection("Sections")
+        .doc(loggedinuser.section)
+        .collection("Subjects")
+        .doc(subj!)
+        .collection('Attendance')
+        .doc('${now.day}-${now.month}-${now.year}')
+        .collection("submissions")
+        .doc(loggedinuser.userId)
+        .set({
+      "name": loggedinuser.userName,
+      "Id": loggedinuser.userId,
+      "timeStamp": ts,
+      "Period": Period,
+      "Subject": subj
+    });
   }
 
   bool validateTime(DateTime userTime, List<String> facultyTime) {

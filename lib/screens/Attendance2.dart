@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:math';
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_work/models/Information.dart';
@@ -15,7 +17,24 @@ class Attendance2 extends StatefulWidget {
 class _Attendance2State extends State<Attendance2> {
   String? dept, subject, year, sem, period, section, acyear;
   int? Otp;
-  int min = 1000, max = 9999;
+  int min = 1000, max = 9999, _counter = 0;
+  bool toogle = true;
+  late Timer _timer;
+  void setTimer() {
+    _counter = 60;
+    _timer = Timer.periodic(Duration(seconds: 1), ((timer) {
+      setState(() {
+        if (_counter > 0) {
+          toogle = false;
+          _counter = _counter - 1;
+        } else {
+          toogle = true;
+          _timer.cancel();
+        }
+      });
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -262,8 +281,9 @@ class _Attendance2State extends State<Attendance2> {
                         });
                       }),
                 ),
-              ]),
-              Row(children: [
+                const SizedBox(
+                  width: 15,
+                ),
                 Flexible(
                   flex: 1,
                   child: DecoratedBox(
@@ -274,6 +294,11 @@ class _Attendance2State extends State<Attendance2> {
                         decoration: InputDecoration(hintText: Otp.toString()),
                       )),
                 ),
+              ]),
+              const SizedBox(
+                height: 15,
+              ),
+              Row(children: [
                 const SizedBox(
                   width: 15,
                 ),
@@ -311,8 +336,10 @@ class _Attendance2State extends State<Attendance2> {
                                 "Subject": subject,
                                 "Time":
                                     '${dateNow.hour}:${dateNow.minute}:${dateNow.second}',
-                                "fId": FirebaseAuth.instance.currentUser!.uid
+                                "fId": FirebaseAuth.instance.currentUser!.uid,
                               });
+                              _counter = 60;
+                              setTimer();
                             },
                             child: Text("Generate OTP")),
                         SizedBox(
@@ -323,6 +350,12 @@ class _Attendance2State extends State<Attendance2> {
                   ),
                 ),
               ]),
+              SizedBox(
+                height: 20,
+              ),
+              (_counter <= 0)
+                  ? Text("")
+                  : Text("The duration to regenerate the OTP ${_counter}"),
             ],
           ),
         ));

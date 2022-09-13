@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_work/screens/Attendance2.dart';
+import 'package:my_work/screens/AttendanceStats.dart';
 import 'package:my_work/screens/Contact.dart';
 import 'package:my_work/screens/lab_verfication.dart';
 import 'package:my_work/screens/subjectRegister.dart';
@@ -57,6 +58,19 @@ class _MenuState extends State<Menu> {
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => subjectRegister()));
+              },
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(
+                Icons.stacked_bar_chart,
+                color: Colors.red,
+              ),
+              title: const Text('Attendance Statistics'),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AttendanceStats()));
               },
             ),
           ),

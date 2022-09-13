@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_work/models/Information.dart';
 import 'package:my_work/models/lab_data.dart';
+import 'package:my_work/screens/create_lab.dart';
 
 class Lab_Home extends StatefulWidget {
   Lab_Home({Key? key}) : super(key: key);
@@ -183,8 +184,8 @@ class _viewLabsState extends State<viewLabs> {
           iconSize: 50,
           color: Colors.black,
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LabCreation()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => CreateLab()));
           },
           icon: Icon(
             Icons.add_task_rounded,

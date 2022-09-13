@@ -159,9 +159,9 @@ class _CodeBlockState extends State<CodeBlock> {
                     items: <String>[
                       'DIP',
                       'DIP_Lab',
-                      'CSE',
-                      'Student',
-                      'Teacher'
+                      'DAA',
+                      'DAA_Lab',
+                      'Python'
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -725,7 +725,7 @@ class _CodeEditorState extends State<CodeEditor> {
                       .get()
                       .then((value) {
                     value.docs.forEach((element) {
-                      idno = element['userID'];
+                      idno = element['userId'];
                     });
                   });
                   print(idno);
@@ -734,7 +734,6 @@ class _CodeEditorState extends State<CodeEditor> {
                     'code': code,
                     'stdin': input,
                     'user': idno,
-                    'lab': widget.lab,
                   });
                   // url += '?code=$code&stdin=$input';
                   var output = await run_code(url);

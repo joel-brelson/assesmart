@@ -4,6 +4,7 @@ import 'package:my_work/Attendace.dart';
 import 'package:my_work/screens/HomePage.dart';
 import 'package:my_work/screens/Menu.dart';
 import 'package:my_work/screens/coding_lab.dart';
+import 'package:my_work/screens/create_lab.dart';
 import 'package:my_work/screens/dashboard.dart';
 import 'package:my_work/screens/flogin.dart';
 import 'package:my_work/screens/home.dart';
@@ -31,7 +32,6 @@ Future<void> main() async {
 
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.first;
-
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -42,6 +42,7 @@ Future<void> main() async {
         '/register': (context) => const Register(),
         '/login': (context) => const Login(),
         '/coding_lab': (context) => const CodingLab(),
+        '/create_lab': (context) => const CreateLab(),
         '/attendance': (context) => const Attendance(img: null),
         '/register_attendence': (context) => const RegisterAttendence(),
         '/flogin': (context) => const FLogin(),
